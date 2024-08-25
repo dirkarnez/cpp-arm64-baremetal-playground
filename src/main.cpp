@@ -7,7 +7,7 @@ void print_uart0(const char *s) {
     }
 }
 
-int main (void) {
+int main () {
     print_uart0("Hello World!\n");
 }
 

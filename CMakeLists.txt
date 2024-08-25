@@ -1,24 +1,9 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.20)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# set(CMAKE_CXX_STANDARD 11)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}\\cmake\\aarch64-none-elf.cmake")
 
-# set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-# set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-# set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-
-message("CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE}")
-
-message("CMAKE_MAKE_PROGRAM ${CMAKE_MAKE_PROGRAM}")
-message("CMAKE_C_COMPILER ${CMAKE_C_COMPILER}")
-message("CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
-message("CMAKE_AR ${CMAKE_AR}")
-message("CMAKE_LINKER_TYPE ${CMAKE_LINKER_TYPE}")
-message("CMAKE_C_COMPILER_LINKER ${CMAKE_C_COMPILER_LINKER}") # READ ONLY
-message("CMAKE_CXX_COMPILER_LINKER ${CMAKE_CXX_COMPILER_LINKER}") # READ ONLY
-message("CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}")
 
 # $(PREFIX)ld --section-start=.text=0 -o $(TARGET).elf $(TARGET).o
 # $(PREFIX)objdump -D $(TARGET).elf > $(TARGET).lst
@@ -40,13 +25,66 @@ project("cpp-arm64-baremetal-playground")
 
 # set_target_properties(${target} PROPERTIES LINK_DEPENDS ${_cur_link_deps})
 
+# select linker script
+set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/ld/link_script.ld")
+
+# define CPU OPTIONS
+set(CPU_OPTIONS "") # -mthumb -mcpu=cortex-m0)
+
 add_executable(${PROJECT_NAME}
+    "src/startup/startup.s"
     "src/main.cpp"
 )
 
-# set(ldscript_path ${LD_DIR}/${ldscript})
-# target_link_libraries(${target} PRIVATE -T ${ldscript_path})
-# set_target_properties(${target} PROPERTIES LINK_DEPENDS ${ldscript_path})
+# add_compile_options(
+#     ${CPU_OPTIONS}
+#     $<$<COMPILE_LANGUAGE:C>:-std=c11>
+#     $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>
+#     $<$<COMPILE_LANGUAGE:CXX>:-fms-extensions>
+#     $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+#     $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
+#     $<$<COMPILE_LANGUAGE:CXX>:-fno-use-cxa-atexit>
+#     $<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>
+#     -fstrict-volatile-bitfields
+#     -ffunction-sections
+#     -fno-threadsafe-statics
+
+#     -Werror
+#     -Wall
+#     -Wextra
+#     -Wcast-align
+#     -Wconversion
+#     -Wsign-conversion
+#     -Wold-style-cast
+#     -Wshadow
+#     -Wlogical-op
+#     -Wsuggest-override
+#     -Wsuggest-final-types
+#     -Wsuggest-final-methods
+#     -pedantic
+# )
+
+# $(LD) -T link_script.ld startup.o hello_world.o -o hello_world.elf
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${CPU_OPTIONS}
+    -T${LINKER_SCRIPT}
+    -nostartfiles
+    -nostdlib
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
+
 
 # target_link_libraries(${PROJECT_NAME} portaudio_static)
 # target_link_options(${PROJECT_NAME} PRIVATE "-static")
+
+
+message("CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE}")
+message("CMAKE_MAKE_PROGRAM ${CMAKE_MAKE_PROGRAM}")
+message("CMAKE_C_COMPILER ${CMAKE_C_COMPILER}")
+message("CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
+message("CMAKE_AR ${CMAKE_AR}")
+message("CMAKE_LINKER_TYPE ${CMAKE_LINKER_TYPE}")
+message("CMAKE_C_COMPILER_LINKER ${CMAKE_C_COMPILER_LINKER}") # READ ONLY
+message("CMAKE_CXX_COMPILER_LINKER ${CMAKE_CXX_COMPILER_LINKER}") # READ ONLY
+message("CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR}")
