@@ -12,4 +12,12 @@ From https://github.com/dirkarnez/qemu-cortex-a7-baremetal
 
 ### Tutorials
 - https://github.com/whzinformatik/baremetal-arm/blob/master/doc/05_cmake.md?plain=1
-- **[adafruit/tinyuf2: UF2 bootloader based on TinyUSB for embedded devices such as ESP32S2, STM32F4 and iMX RT10xx](https://github.com/adafruit/tinyuf2/tree/master)**
+- [**adafruit/tinyuf2: UF2 bootloader based on TinyUSB for embedded devices such as ESP32S2, STM32F4 and iMX RT10xx**](https://github.com/adafruit/tinyuf2/tree/master)
+- [gnif/STM32F103-BareMetal: Bare Metal STM32F103 CMake project without any external dependencies.](https://github.com/gnif/STM32F103-BareMetal)
+- https://github.com/coder137/STM32-Repo/tree/master/Baremetal
+- https://github.com/CharlesDias/stm32_gtest_c_code
+- [**cortexm/baremetal: ARM Cortex-M bare-metal example code in C++ and CMake build**](https://github.com/cortexm/baremetal)
+- [BlackBoxes/systems/baremetal at master · NoBlackBoxes/BlackBoxes](https://github.com/NoBlackBoxes/BlackBoxes/tree/master/systems/baremetal)
+
+### Toolchains
+- **https://github.com/Xilinx/embeddedsw-experimental-dt-support/tree/master/cmake/toolchainfiles**

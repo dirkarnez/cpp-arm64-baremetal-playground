@@ -34,11 +34,8 @@ enable_language(ASM)
 # select linker script
 set(LINKER_SCRIPT "ld/link_script.ld")
 
-
-
 # define CPU OPTIONS
 # set(CPU_OPTIONS "-mcpu=cortex-a72")
-
 
 add_executable(${PROJECT_NAME}
     "src/startup.s"
@@ -48,31 +45,44 @@ add_executable(${PROJECT_NAME}
 # target_link_libraries(${PROJECT_NAME} $<TARGET_OBJECTS:startup>)
 # message("!!!!!!!!!!! $<TARGET_OBJECTS:startup>")
 
-function(stm32_add_linker_script TARGET VISIBILITY SCRIPT)
-    get_filename_component(SCRIPT "${SCRIPT}" ABSOLUTE)
+# function(stm32_add_linker_script TARGET VISIBILITY SCRIPT)
+#     get_filename_component(SCRIPT "${SCRIPT}" ABSOLUTE)
 
-    target_link_options(${TARGET} ${VISIBILITY} 
-        -T "${SCRIPT}"
-        -nostartfiles
-        -nostdlib
-    )
+#     target_link_options(${TARGET} ${VISIBILITY} 
+#         -T "${SCRIPT}"
+#         -nostartfiles
+#         -nostdlib
+#     )
 
-    get_target_property(TARGET_TYPE ${TARGET} TYPE)
-    if(TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
-        set(INTERFACE_PREFIX "INTERFACE_")
-    endif()
+#     get_target_property(TARGET_TYPE ${TARGET} TYPE)
+#     if(TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+#         set(INTERFACE_PREFIX "INTERFACE_")
+#     endif()
 
-    get_target_property(LINK_DEPENDS ${TARGET} ${INTERFACE_PREFIX}LINK_DEPENDS)
-    if(LINK_DEPENDS)
-        list(APPEND LINK_DEPENDS "${SCRIPT}")
-    else()
-        set(LINK_DEPENDS "${SCRIPT}")
-    endif()
+#     get_target_property(LINK_DEPENDS ${TARGET} ${INTERFACE_PREFIX}LINK_DEPENDS)
+#     if(LINK_DEPENDS)
+#         list(APPEND LINK_DEPENDS "${SCRIPT}")
+#     else()
+#         set(LINK_DEPENDS "${SCRIPT}")
+#     endif()
 
-    set_target_properties(${TARGET} PROPERTIES ${INTERFACE_PREFIX}LINK_DEPENDS "${LINK_DEPENDS}")
-endfunction()
+#     set_target_properties(${TARGET} PROPERTIES ${INTERFACE_PREFIX}LINK_DEPENDS "${LINK_DEPENDS}")
+# endfunction()
 
-stm32_add_linker_script(${PROJECT_NAME} PUBLIC "ld/link_script.ld")
+target_link_options(${PROJECT_NAME} PRIVATE
+	-T${CMAKE_SOURCE_DIR}/ld/link_script.ld
+	# -mcpu=cortex-m3
+	# -mthumb
+	# --specs=nano.specs
+	# -lc 
+    # -lm
+    # -lnosys
+	# -Wl,--gc-sections
+    -nostartfiles
+    -nostdlib
+)
+
+# stm32_add_linker_script(${PROJECT_NAME} PUBLIC "ld/link_script.ld")
 
 
 # target_link_options(${PROJECT_NAME}
