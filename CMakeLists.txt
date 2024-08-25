@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.20)
 # set(CMAKE_CXX_STANDARD 11)
 # set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_EXECUTABLE_SUFFIX .elf)
+set(CMAKE_CROSSCOMPILING TRUE)
 
 
 # $(PREFIX)ld --section-start=.text=0 -o $(TARGET).elf $(TARGET).o
@@ -13,7 +15,9 @@ cmake_minimum_required(VERSION 3.20)
 # export CC="$USERPROFILE/Downloads/xpack-aarch64-none-elf-gcc-13.2.1-1.1-win32-x64/xpack-aarch64-none-elf-gcc-13.2.1-1.1/bin/aarch64-none-elf-gcc.exe"
 # export LD="$USERPROFILE/Downloads/xpack-aarch64-none-elf-gcc-13.2.1-1.1-win32-x64/xpack-aarch64-none-elf-gcc-13.2.1-1.1/bin/aarch64-none-elf-ld.exe"
 
-project("cpp-arm64-baremetal-playground")
+project("cpp-arm64-baremetal-playground" C ASM)
+
+
 
 enable_language(ASM)
 
@@ -28,20 +32,52 @@ enable_language(ASM)
 # set_target_properties(${target} PROPERTIES LINK_DEPENDS ${_cur_link_deps})
 
 # select linker script
-set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/ld/link_script.ld")
+set(LINKER_SCRIPT "ld/link_script.ld")
 
 
-
-
-# set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> -o 123.elf <LINK_FLAGS> <OBJECTS> <LINK_LIBRARIES>")
 
 # define CPU OPTIONS
 # set(CPU_OPTIONS "-mcpu=cortex-a72")
 
-add_library(${PROJECT_NAME} STATIC
-    "src/startup/startup.s"
+
+add_executable(${PROJECT_NAME}
+    "src/startup.s"
     "src/main.c"
 )
+
+# target_link_libraries(${PROJECT_NAME} $<TARGET_OBJECTS:startup>)
+# message("!!!!!!!!!!! $<TARGET_OBJECTS:startup>")
+
+function(stm32_add_linker_script TARGET VISIBILITY SCRIPT)
+    get_filename_component(SCRIPT "${SCRIPT}" ABSOLUTE)
+
+    target_link_options(${TARGET} ${VISIBILITY} 
+        -T "${SCRIPT}"
+        -nostartfiles
+        -nostdlib
+    )
+
+    get_target_property(TARGET_TYPE ${TARGET} TYPE)
+    if(TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
+        set(INTERFACE_PREFIX "INTERFACE_")
+    endif()
+
+    get_target_property(LINK_DEPENDS ${TARGET} ${INTERFACE_PREFIX}LINK_DEPENDS)
+    if(LINK_DEPENDS)
+        list(APPEND LINK_DEPENDS "${SCRIPT}")
+    else()
+        set(LINK_DEPENDS "${SCRIPT}")
+    endif()
+
+    set_target_properties(${TARGET} PROPERTIES ${INTERFACE_PREFIX}LINK_DEPENDS "${LINK_DEPENDS}")
+endfunction()
+
+stm32_add_linker_script(${PROJECT_NAME} PUBLIC "ld/link_script.ld")
+
+
+# target_link_options(${PROJECT_NAME}
+#   INTERFACE
+#   -T "C:/Users/19081126D/Downloads/cpp-arm64-baremetal-playground/ld/link_script.ld")
 
 # add_compile_options(
 #     ${CPU_OPTIONS}
@@ -72,21 +108,32 @@ add_library(${PROJECT_NAME} STATIC
 # )
 
 # $(LD) -T link_script.ld startup.o hello_world.o -o hello_world.elf
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${CPU_OPTIONS}
-    -T${LINKER_SCRIPT}
-    -nostartfiles
-    -nostdlib
-)
+# target_link_libraries(${PROJECT_NAME} PRIVATE
+#     ${CPU_OPTIONS}
+#     -T${LINKER_SCRIPT}
+#     -nostartfiles
+#     -nostdlib
+# )
 
 # target_link_options(${PROJECT_NAME} PRIVATE "-o 1243.elf")
 # set_property(TARGET ${PROJECT_NAME} PROPERTY TARGET_FILE_ELF "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf")
 
 # set_target_properties(${PROJECT_NAME} PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
-set (CMAKE_STATIC_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
+# set (CMAKE_STATIC_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
-set(CMAKE_EXECUTABLE_SUFFIX ".elf")
-set(CMAKE_STATIC_LIBRARY_SUFFIX ".elf")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "bare-metal.elf")
+message("LINKER_SCRIPT ${LINKER_SCRIPT}")
+
+# set (CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
+
+# target_link_options(${PROJECT_NAME} PRIVATE "-T 65765 -static")
+
+# target_link_libraries(${PROJECT_NAME} PRIVATE
+#     ${CPU_OPTIONS}
+#     -T${LINKER_SCRIPT}
+#     -nostartfiles
+#     -nostdlib
+# )
 
 
 # # Convert output to hex and binary
@@ -99,7 +146,7 @@ set(CMAKE_STATIC_LIBRARY_SUFFIX ".elf")
 #     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 # )
 
-# target_link_libraries(${PROJECT_NAME} portaudio_static)
+
 # target_link_options(${PROJECT_NAME} PRIVATE "-static")
 
 

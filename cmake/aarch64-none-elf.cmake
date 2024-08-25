@@ -21,13 +21,9 @@ set(CMAKE_OBJCOPY ${PREFIX}objcopy)
 set(CMAKE_OBJDUMP ${PREFIX}objdump)
 set(SIZE ${PREFIX}size)
 
-set(CMAKE_C_LINK_EXECUTABLE ${PREFIX}ld)
-set(CMAKE_CXX_LINK_EXECUTABLE ${PREFIX}ld)
 
-
-
-set(CMAKE_C_COMPILER_TARGET "aarch64-none-elf")
-set(CMAKE_CXX_COMPILER_TARGET "aarch64-none-elf")
+# set(CMAKE_C_COMPILER_TARGET "aarch64-none-elf")
+# set(CMAKE_CXX_COMPILER_TARGET "aarch64-none-elf")
 
 
 
