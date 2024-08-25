@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.20)
 
 
 
-
 # $(PREFIX)ld --section-start=.text=0 -o $(TARGET).elf $(TARGET).o
 # $(PREFIX)objdump -D $(TARGET).elf > $(TARGET).lst
 # $(PREFIX)objcopy $(TARGET).elf -O binary $(TARGET).bin
@@ -16,6 +15,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project("cpp-arm64-baremetal-playground")
 
+enable_language(ASM)
 
 # find_package(portaudio 19 EXACT REQUIRED) # PATHS "P:\\Downloads\\cpp-libraries\\portaudio\\build\\cmake\\portaudio")
 
@@ -29,14 +29,18 @@ project("cpp-arm64-baremetal-playground")
 
 # select linker script
 set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/ld/link_script.ld")
+
+
+
+
 # set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> -o 123.elf <LINK_FLAGS> <OBJECTS> <LINK_LIBRARIES>")
 
 # define CPU OPTIONS
-set(CPU_OPTIONS "-mcpu=cortex-a72")
+# set(CPU_OPTIONS "-mcpu=cortex-a72")
 
 add_library(${PROJECT_NAME} STATIC
-    "src/startup/startup.asm"
-    "src/main.cpp"
+    "src/startup/startup.s"
+    "src/main.c"
 )
 
 # add_compile_options(
@@ -78,8 +82,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # target_link_options(${PROJECT_NAME} PRIVATE "-o 1243.elf")
 # set_property(TARGET ${PROJECT_NAME} PROPERTY TARGET_FILE_ELF "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf")
 
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
+# set_target_properties(${PROJECT_NAME} PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
+set (CMAKE_STATIC_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
+set(CMAKE_EXECUTABLE_SUFFIX ".elf")
+set(CMAKE_STATIC_LIBRARY_SUFFIX ".elf")
 
 
 # # Convert output to hex and binary
