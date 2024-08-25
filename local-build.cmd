@@ -17,14 +17,16 @@ SET PATH=^
 @REM -Dportaudio_DIR="%DOWNLOADS_DIR_LINUX%/portaudio-v19.7.0-mingw64-x86_64-posix-seh-rev0-8.1.0/lib/cmake/portaudio" ^
 
 if exist cmake-build (
+    echo "!!! deleting"
     rmdir /s /q cmake-build
 )
+@REM cmake --build . &&^
 
-cmake.exe -G"MinGW Makefiles" ^
+cmake --debug-output -G"MinGW Makefiles" ^
 -DCMAKE_BUILD_TYPE=Debug ^
 --toolchain "%CD:\=/%/cmake/aarch64-none-elf.cmake" ^
 -B./cmake-build &&^
 cd cmake-build &&^
-cmake --build . &&^
+mingw32-make &&^
 echo "Successful build"
 pause

@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.20)
 
 
 
+
 # $(PREFIX)ld --section-start=.text=0 -o $(TARGET).elf $(TARGET).o
 # $(PREFIX)objdump -D $(TARGET).elf > $(TARGET).lst
 # $(PREFIX)objcopy $(TARGET).elf -O binary $(TARGET).bin
@@ -14,6 +15,7 @@ cmake_minimum_required(VERSION 3.20)
 # export LD="$USERPROFILE/Downloads/xpack-aarch64-none-elf-gcc-13.2.1-1.1-win32-x64/xpack-aarch64-none-elf-gcc-13.2.1-1.1/bin/aarch64-none-elf-ld.exe"
 
 project("cpp-arm64-baremetal-playground")
+
 
 # find_package(portaudio 19 EXACT REQUIRED) # PATHS "P:\\Downloads\\cpp-libraries\\portaudio\\build\\cmake\\portaudio")
 
@@ -27,12 +29,13 @@ project("cpp-arm64-baremetal-playground")
 
 # select linker script
 set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/ld/link_script.ld")
+# set(CMAKE_CXX_LINK_EXECUTABLE "<CMAKE_LINKER> -o 123.elf <LINK_FLAGS> <OBJECTS> <LINK_LIBRARIES>")
 
 # define CPU OPTIONS
-set(CPU_OPTIONS "") # -mthumb -mcpu=cortex-m0)
+set(CPU_OPTIONS "-mcpu=cortex-a72")
 
-add_executable(${PROJECT_NAME}
-    "src/startup/startup.s"
+add_library(${PROJECT_NAME} STATIC
+    "src/startup/startup.asm"
     "src/main.cpp"
 )
 
@@ -72,14 +75,29 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     -nostdlib
 )
 
+# target_link_options(${PROJECT_NAME} PRIVATE "-o 1243.elf")
+# set_property(TARGET ${PROJECT_NAME} PROPERTY TARGET_FILE_ELF "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.elf")
+
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
 
+
+
+# # Convert output to hex and binary
+# add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+#     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
+# )
+
+# # Convert to bin file -> add conditional check?
+# add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+#     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
+# )
 
 # target_link_libraries(${PROJECT_NAME} portaudio_static)
 # target_link_options(${PROJECT_NAME} PRIVATE "-static")
 
 
 message("CMAKE_TOOLCHAIN_FILE ${CMAKE_TOOLCHAIN_FILE}")
+message("CMAKE_CXX_LINK_EXECUTABLE  ${CMAKE_CXX_LINK_EXECUTABLE}")
 message("CMAKE_MAKE_PROGRAM ${CMAKE_MAKE_PROGRAM}")
 message("CMAKE_C_COMPILER ${CMAKE_C_COMPILER}")
 message("CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
