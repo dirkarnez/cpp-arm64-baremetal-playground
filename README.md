@@ -21,3 +21,4 @@ From https://github.com/dirkarnez/qemu-cortex-a7-baremetal
 
 ### Toolchains
 - **https://github.com/Xilinx/embeddedsw-experimental-dt-support/tree/master/cmake/toolchainfiles**
+- https://github.com/Tencent/ncnn/blob/master/toolchains/riscv64-unknown-elf.toolchain.cmake
