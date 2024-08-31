@@ -14,6 +14,7 @@ From https://github.com/dirkarnez/qemu-cortex-a7-baremetal
 - CMake is totally not embedded-friendly
 
 ### Tutorials
+- https://github.com/five-embeddev/riscv-scratchpad/blob/master/baremetal-startup-c/src/timer.c
 - https://github.com/whzinformatik/baremetal-arm/blob/master/doc/05_cmake.md?plain=1
 - [**adafruit/tinyuf2: UF2 bootloader based on TinyUSB for embedded devices such as ESP32S2, STM32F4 and iMX RT10xx**](https://github.com/adafruit/tinyuf2/tree/master)
 - [gnif/STM32F103-BareMetal: Bare Metal STM32F103 CMake project without any external dependencies.](https://github.com/gnif/STM32F103-BareMetal)
