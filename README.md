@@ -10,6 +10,7 @@ From https://github.com/dirkarnez/qemu-cortex-a7-baremetal
   - https://github.com/mincrmatt12/MSynth/blob/60c761be8adcbf22b4b2969b076bf5ad3cd17c99/framework/build.cmake#L114
 - [ ] Create UBoot template
   - https://github.com/whzinformatik/baremetal-arm/tree/b9574aacf8c07305f239d9e0a01d07b86f2cc5ce/src/05_cmake
+- [ ] Build as cli for testing
 
 ### Tutorials
 - https://github.com/five-embeddev/riscv-scratchpad/blob/master/baremetal-startup-c/src/timer.c
