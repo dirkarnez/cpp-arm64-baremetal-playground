@@ -4,14 +4,12 @@ cpp-arm64-baremetal-playground
 From https://github.com/dirkarnez/qemu-cortex-a7-baremetal
 
 ### TODOs
-- [ ] delete CMake?
+- [x] delete CMake?
+  - CMake is totally not embedded-friendly
 - [ ] remove direct referencing to startup.o inside `link_script.ld`, which CMake cannot do directly
   - https://github.com/mincrmatt12/MSynth/blob/60c761be8adcbf22b4b2969b076bf5ad3cd17c99/framework/build.cmake#L114
 - [ ] Create UBoot template
   - https://github.com/whzinformatik/baremetal-arm/tree/b9574aacf8c07305f239d9e0a01d07b86f2cc5ce/src/05_cmake
-
-### NOTES
-- CMake is totally not embedded-friendly
 
 ### Tutorials
 - https://github.com/five-embeddev/riscv-scratchpad/blob/master/baremetal-startup-c/src/timer.c
